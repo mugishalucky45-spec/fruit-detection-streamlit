@@ -7,12 +7,13 @@ st.set_page_config(
     page_title="Fruit Detection System",
     page_icon="🍎",
     layout="wide",
-    page_title="GROUP MEMBERS NAME AND REG NO",
-    page_title="MUGISHA EMMANUEL 20RP00370",
-    page_title="NDAYIMENYE SAMUEL 26RP02292",
 )
 
 st.title("🍎 Fruit Detection System")
+st.subheader("GROUP MEMBERS")
+
+st.write("1. MUGISHA EMMANUEL — 20RP00370")
+st.write("2. NDAYIMENYE SAMUEL — 26RP02292")
 st.write("AI-powered fruit detection using YOLOv8n.")
 
 @st.cache_resource
