@@ -5,6 +5,9 @@ import tempfile
 import os
 
 st.set_page_config(
+    page_title="GROUP MEMBERS NAMES AND REG NO",
+    page_title="1. MUGISHA EMMANUEL  20RP00370",
+    page_title="2. NDAYIMENYE SAMUEL 26RP02292",
     page_title="Fruit Detection System",
     page_icon="🍎",
     layout="wide"
