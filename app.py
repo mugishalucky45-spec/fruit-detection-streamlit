@@ -14,6 +14,8 @@ st.subheader("GROUP MEMBERS")
 
 st.write("1. MUGISHA EMMANUEL — 20RP00370")
 st.write("2. NDAYIMENYE SAMUEL — 26RP02292")
+st.write("3. IRABISHOBOYE GILBERT — 26RP00139")
+st.write("4. NSABIMANA RUKUNDO OLIVIEL — 26RP01994")
 st.write("AI-powered fruit detection using YOLOv8n.")
 
 @st.cache_resource
