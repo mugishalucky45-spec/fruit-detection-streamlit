@@ -6,7 +6,7 @@ import pandas as pd
 st.set_page_config(
     page_title="Fruit Detection System",
     page_icon="🍎",
-    layout="wide"
+    layout="wide",
     page_title="GROUP MEMBERS NAME AND REG NO",
     page_title="MUGISHA EMMANUEL 20RP00370",
     page_title="NDAYIMENYE SAMUEL 26RP02292",
