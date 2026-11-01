@@ -1,7 +1,9 @@
+
 import streamlit as st
 from ultralytics import YOLO
 from PIL import Image
 import pandas as pd
+import io
 
 st.set_page_config(
     page_title="Fruit Detection System",
@@ -16,29 +18,34 @@ st.write("1. MUGISHA EMMANUEL — 20RP00370")
 st.write("2. NDAYIMENYE SAMUEL — 26RP02292")
 st.write("3. IRABISHOBOYE GILBERT — 26RP00139")
 st.write("4. NSABIMANA RUKUNDO OLIVIEL — 26RP01994")
+
 st.write("AI-powered fruit detection using YOLOv8n.")
+
+# Class mapping: RF-DETR uses IDs 1, 2, 3 for the three classes
+CLASS_NAMES = {
+    1: "apple",
+    2: "banana",
+    3: "orange",
+}
+
+COLORS = {
+    "apple": (255, 0, 0),
+    "banana": (255, 200, 0),
+    "orange": (0, 180, 0),
+}
 
 @st.cache_resource
 def load_model():
-    return YOLO("best.pt")
+    return YOLO("best_corrected.pt")
 
 model = load_model()
-
 st.sidebar.header("Detection Settings")
 
 confidence = st.sidebar.slider(
     "Confidence Threshold",
     min_value=0.05,
     max_value=0.95,
-    value=0.20,
-    step=0.05
-)
-
-iou_threshold = st.sidebar.slider(
-    "Duplicate Box Reduction (IoU)",
-    min_value=0.10,
-    max_value=0.90,
-    value=0.45,
+    value=0.30,
     step=0.05
 )
 
@@ -51,29 +58,25 @@ if uploaded_file:
     image = Image.open(uploaded_file).convert("RGB")
 
     st.subheader("Original Image")
-    st.image(image, use_container_width=True)
+    st.image(image, use_column_width=True)
 
     if st.button("🔍 Detect Fruits", type="primary"):
 
         with st.spinner("Analyzing image..."):
 
             results = model.predict(
-                image,
-                conf=confidence,
-                iou=iou_threshold,
-                verbose=False
+            image,
+            conf=confidence,
+            iou=0.45,
+            verbose=False
             )
 
             result = results[0]
             boxes = result.boxes
 
-            st.subheader("Detection Results")
-
             annotated_image = result.plot()
-            st.image(
-                annotated_image,
-                channels="BGR",
-                use_container_width=True
+            annotated_image = Image.fromarray(
+                annotated_image[:, :, ::-1]
             )
 
             fruit_counts = {
@@ -85,20 +88,23 @@ if uploaded_file:
             detection_data = []
 
             if boxes is not None and len(boxes) > 0:
-
                 for box in boxes:
                     class_id = int(box.cls[0])
                     fruit = model.names[class_id].lower()
                     score = float(box.conf[0])
 
-                    fruit_counts[fruit] = (
-                        fruit_counts.get(fruit, 0) + 1
-                    )
+                    if fruit not in fruit_counts:
+                        continue
+
+                    fruit_counts[fruit] += 1
 
                     detection_data.append({
                         "Fruit": fruit.capitalize(),
                         "Confidence": round(score * 100, 2)
                     })
+
+            st.subheader("Detection Results")
+            st.image(annotated_image, use_column_width=True)
 
             total = sum(fruit_counts.values())
 
@@ -132,13 +138,8 @@ if uploaded_file:
                     mime="text/csv"
                 )
 
-                image_to_download = Image.fromarray(
-                    annotated_image[:, :, ::-1]
-                )
-
-                import io
                 image_buffer = io.BytesIO()
-                image_to_download.save(image_buffer, format="PNG")
+                annotated_image.save(image_buffer, format="PNG")
 
                 st.download_button(
                     "Download Annotated Image",
@@ -148,4 +149,6 @@ if uploaded_file:
                 )
 
             else:
-                st.warning("No fruits detected. Try lowering the confidence threshold.")
+                st.warning(
+                    "No fruits detected. Try lowering the confidence threshold."
+                )
