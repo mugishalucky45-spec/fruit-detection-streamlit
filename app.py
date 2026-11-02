@@ -36,7 +36,7 @@ COLORS = {
 
 @st.cache_resource
 def load_model():
-    return YOLO("best_corrected.pt")
+    return YOLO("best.pt")
 
 model = load_model()
 st.sidebar.header("Detection Settings")
